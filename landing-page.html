@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aura — Redefine Your Experience</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --white: #f5f3ef;
+      --accent: #c8a96e;
+      --accent-dark: #9d7f47;
+      --accent-light: #e8d9b8;
+      --mid: #1e1c19;
+      --muted: #6b6560;
+      --border: rgba(200, 169, 110, 0.2);
+      --radius: 2px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.5rem 4rem;
+      transition: background 0.4s, backdrop-filter 0.4s, padding 0.3s;
+    }
+    nav.scrolled {
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(20px);
+      padding: 1rem 4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      color: rgba(245,243,239,0.7);
+      text-decoration: none;
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 0.55rem 1.5rem;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+    }
+    .nav-cta:hover { background: var(--accent); color: var(--black); }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block; width: 24px; height: 1px;
+      background: var(--white); transition: 0.3s;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 40%, rgba(200,169,110,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 20% 80%, rgba(200,169,110,0.06) 0%, transparent 50%),
+        linear-gradient(180deg, #0a0a0a 0%, #12100d 100%);
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(200,169,110,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,169,110,0.05) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 0%, transparent 100%);
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 900px; padding: 0 2rem; }
+    .hero-badge {
+      display: inline-block;
+      border: 1px solid var(--border);
+      color: var(--accent);
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.4rem 1.2rem;
+      border-radius: 50px;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.3s forwards;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.8rem;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.5s forwards;
+    }
+    .hero-title em { font-style: italic; color: var(--accent); }
+    .hero-sub {
+      font-size: 1.05rem;
+      color: rgba(245,243,239,0.6);
+      max-width: 500px;
+      margin: 0 auto 3rem;
+      line-height: 1.8;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.7s forwards;
+    }
+    .hero-actions {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.9s forwards;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--black);
+      border: none;
+      padding: 0.9rem 2.5rem;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+    }
+    .btn-primary:hover {
+      background: var(--accent-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(200,169,110,0.3);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      border: 1px solid rgba(245,243,239,0.3);
+      padding: 0.9rem 2.5rem;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: border-color 0.3s, color 0.3s, transform 0.2s;
+    }
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .hero-scroll {
+      position: absolute; bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      opacity: 0;
+      animation: fadeIn 1s 1.5s forwards;
+      cursor: pointer;
+    }
+    .hero-scroll span {
+      font-size: 0.68rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .scroll-line {
+      width: 1px; height: 50px;
+      background: linear-gradient(var(--accent), transparent);
+      animation: scrollPulse 2s infinite;
+    }
+
+    /* ── SECTION WRAPPER ── */
+    section { padding: 8rem 4rem; }
+    .section-label {
+      font-size: 0.7rem; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.5rem);
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+    .section-title em { font-style: italic; color: var(--accent); }
+    .section-desc {
+      color: rgba(245,243,239,0.55);
+      font-size: 1rem;
+      max-width: 500px;
+      line-height: 1.8;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+
+    /* ── FEATURES ── */
+    #features { background: var(--black); }
+    .features-header { text-align: center; margin-bottom: 5rem; }
+    .features-header .section-desc { margin: 0 auto; }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5px;
+      border: 1px solid var(--border);
+    }
+    .feature-card {
+      padding: 3rem 2.5rem;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      transition: background 0.4s;
+      background: var(--black);
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(200,169,110,0.06) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .feature-card:hover { background: var(--mid); }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-icon {
+      width: 48px; height: 48px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 2rem;
+      font-size: 1.3rem;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .feature-card:hover .feature-icon {
+      border-color: var(--accent);
+      background: rgba(200,169,110,0.1);
+    }
+    .feature-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 400;
+      margin-bottom: 0.8rem;
+    }
+    .feature-desc {
+      font-size: 0.9rem;
+      color: rgba(245,243,239,0.55);
+      line-height: 1.75;
+    }
+    .feature-num {
+      position: absolute; top: 2rem; right: 2.5rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.5rem;
+      font-weight: 300;
+      color: rgba(200,169,110,0.08);
+      line-height: 1;
+    }
+
+    /* ── ABOUT ── */
+    #about { background: var(--mid); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+    .about-image {
+      position: relative;
+    }
+    .about-img-frame {
+      width: 100%; aspect-ratio: 4/5;
+      background:
+        linear-gradient(135deg, rgba(200,169,110,0.15) 0%, rgba(200,169,110,0.03) 100%);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .about-img-frame::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 20px,
+          rgba(200,169,110,0.03) 20px,
+          rgba(200,169,110,0.03) 21px
+        );
+    }
+    .about-img-inner {
+      position: absolute; inset: 2rem;
+      background: linear-gradient(135deg, #1a1714 0%, #0f0d0b 100%);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .about-img-icon {
+      font-size: 4rem;
+      opacity: 0.3;
+    }
+    .about-tag {
+      position: absolute; bottom: -1rem; right: -1rem;
+      background: var(--accent);
+      color: var(--black);
+      padding: 1rem 1.5rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .about-stats {
+      display: flex; gap: 2.5rem;
+      margin-top: 3rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .stat-item {}
+    .stat-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    /* ── PRODUCTS ── */
+    #products { background: var(--black); }
+    .products-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 4rem;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .product-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      group: true;
+    }
+    .product-card:first-child {
+      grid-row: span 2;
+    }
+    .product-visual {
+      width: 100%;
+      aspect-ratio: 4/3;
+      position: relative;
+      overflow: hidden;
+    }
+    .product-card:first-child .product-visual {
+      aspect-ratio: unset;
+      height: 100%;
+      min-height: 300px;
+    }
+    .product-bg {
+      position: absolute; inset: 0;
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .product-card:hover .product-bg { transform: scale(1.05); }
+    .product-bg-1 { background: linear-gradient(135deg, #1a1410 0%, #2d2318 100%); }
+    .product-bg-2 { background: linear-gradient(135deg, #10141a 0%, #182330 100%); }
+    .product-bg-3 { background: linear-gradient(135deg, #121810 0%, #1e2d18 100%); }
+    .product-bg-4 { background: linear-gradient(135deg, #1a1018 0%, #2d182a 100%); }
+
+    .product-pattern {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 5rem;
+      opacity: 0.12;
+    }
+    .product-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(10,10,10,0.9) 0%, transparent 60%);
+      padding: 2rem;
+      display: flex; flex-direction: column; justify-content: flex-end;
+    }
+    .product-tag {
+      display: inline-block;
+      background: rgba(200,169,110,0.15);
+      border: 1px solid rgba(200,169,110,0.3);
+      color: var(--accent);
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.8rem;
+      border-radius: 50px;
+      margin-bottom: 0.8rem;
+      align-self: flex-start;
+    }
+    .product-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 300;
+    }
+    .product-price {
+      color: var(--accent);
+      font-size: 0.9rem;
+      margin-top: 0.3rem;
+    }
+    .product-arrow {
+      position: absolute; top: 1.5rem; right: 1.5rem;
+      width: 36px; height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s, background 0.3s;
+    }
+    .product-card:hover .product-arrow { opacity: 1; background: var(--accent); border-color: var(--accent); }
+
+    /* ── TESTIMONIALS ── */
+    #testimonials { background: var(--mid); overflow: hidden; }
+    .testimonials-header { text-align: center; margin-bottom: 5rem; }
+    .testimonials-header .section-desc { margin: 0 auto; }
+    .testimonials-track {
+      display: flex; gap: 2rem;
+      animation: slide 28s linear infinite;
+      width: max-content;
+    }
+    .testimonials-track:hover { animation-play-state: paused; }
+    .testi-card {
+      width: 380px;
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      background: rgba(255,255,255,0.02);
+      flex-shrink: 0;
+      position: relative;
+    }
+    .testi-quote {
+      font-size: 2.5rem;
+      color: var(--accent);
+      font-family: 'Cormorant Garamond', serif;
+      line-height: 1;
+      margin-bottom: 1.2rem;
+      opacity: 0.5;
+    }
+    .testi-text {
+      font-size: 0.95rem;
+      color: rgba(245,243,239,0.75);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+      font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+    }
+    .testi-author { display: flex; align-items: center; gap: 1rem; }
+    .testi-avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      color: var(--black);
+      font-weight: 500;
+    }
+    .testi-name {
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    .testi-role { font-size: 0.78rem; color: var(--muted); margin-top: 0.1rem; }
+    .testi-stars {
+      position: absolute; top: 2.5rem; right: 2.5rem;
+      color: var(--accent);
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+    }
+
+    /* ── CTA ── */
+    #cta {
+      background: var(--black);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 70% at 50% 50%, rgba(200,169,110,0.1) 0%, transparent 70%);
+    }
+    .cta-content { position: relative; z-index: 2; max-width: 700px; margin: 0 auto; }
+    .cta-eyebrow {
+      display: inline-block;
+      font-size: 0.7rem; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+    .cta-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    .cta-title em { font-style: italic; color: var(--accent); }
+    .cta-sub {
+      color: rgba(245,243,239,0.5);
+      margin-bottom: 3rem;
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+    .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-large {
+      padding: 1.1rem 3rem;
+      font-size: 0.9rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--mid);
+      border-top: 1px solid var(--border);
+      padding: 5rem 4rem 2.5rem;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem;
+      margin-bottom: 4rem;
+    }
+    .footer-brand .nav-logo { display: block; margin-bottom: 1.2rem; }
+    .footer-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 280px;
+      margin-bottom: 2rem;
+    }
+    .footer-social { display: flex; gap: 0.8rem; }
+    .social-link {
+      width: 38px; height: 38px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: border-color 0.3s, color 0.3s, background 0.3s;
+    }
+    .social-link:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(200,169,110,0.08);
+    }
+    .footer-heading {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .footer-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--white); }
+    .footer-contact { font-size: 0.88rem; color: var(--muted); line-height: 2; }
+    .footer-contact a { color: var(--muted); text-decoration: none; transition: color 0.3s; }
+    .footer-contact a:hover { color: var(--accent); }
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-copy { font-size: 0.78rem; color: var(--muted); }
+    .footer-legal { display: flex; gap: 2rem; }
+    .footer-legal a { font-size: 0.78rem; color: var(--muted); text-decoration: none; transition: color 0.3s; }
+    .footer-legal a:hover { color: var(--accent); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 1; transform: scaleY(1); }
+      50% { opacity: 0.4; transform: scaleY(0.6); }
+    }
+    @keyframes slide {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* ── REVEAL ON SCROLL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 2rem; }
+      nav.scrolled { padding: 0.8rem 2rem; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      section { padding: 5rem 2rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .products-grid { grid-template-columns: 1fr; }
+      .product-card:first-child { grid-row: span 1; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+      .features-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      .about-stats { flex-wrap: wrap; }
+      .products-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── MOBILE MENU ── */
+    .mobile-menu {
+      position: fixed; inset: 0; z-index: 99;
+      background: rgba(10,10,10,0.97);
+      backdrop-filter: blur(20px);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 2.5rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .mobile-menu.open { opacity: 1; pointer-events: all; }
+    .mobile-menu a {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: var(--white);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .mobile-menu a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">AU<span>R</span>A</a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#products">Collection</a></li>
+      <li><a href="#testimonials">Reviews</a></li>
+    </ul>
+    <button class="nav-cta" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Get Started</button>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#features" class="mob-link">Features</a>
+    <a href="#about" class="mob-link">About</a>
+    <a href="#products" class="mob-link">Collection</a>
+    <a href="#testimonials" class="mob-link">Reviews</a>
+    <a href="#cta" class="mob-link">Get Started</a>
+  </div>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-badge">✦ New Collection 2026</div>
+      <h1 class="hero-title">
+        Crafted for Those<br />Who Demand <em>Excellence</em>
+      </h1>
+      <p class="hero-sub">
+        Premium experiences, thoughtfully curated for the discerning few who understand that quality is never a compromise.
+      </p>
+      <div class="hero-actions">
+        <a href="#products" class="btn-primary">Explore Collection</a>
+        <a href="#about" class="btn-outline">Our Story</a>
+      </div>
+    </div>
+    <div class="hero-scroll" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="container">
+      <div class="features-header reveal">
+        <span class="section-label">Why Aura</span>
+        <h2 class="section-title">Built on Four <em>Pillars</em></h2>
+        <p class="section-desc">Every detail considered, every standard exceeded. This is what sets Aura apart.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card reveal reveal-delay-1">
+          <div class="feature-num">01</div>
+          <div class="feature-icon">◈</div>
+          <h3 class="feature-title">Uncompromising Quality</h3>
+          <p class="feature-desc">Sourced from the world's finest artisans. Every product undergoes 47-point quality inspection before reaching you.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <div class="feature-num">02</div>
+          <div class="feature-icon">⬡</div>
+          <h3 class="feature-title">Timeless Design</h3>
+          <p class="feature-desc">Designed to transcend trends. Our aesthetic philosophy ensures each piece remains relevant for decades.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-3">
+          <div class="feature-num">03</div>
+          <div class="feature-icon">◎</div>
+          <h3 class="feature-title">Conscious Luxury</h3>
+          <p class="feature-desc">Sustainable practices, ethical sourcing. Premium doesn't have to come at the planet's expense.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-4">
+          <div class="feature-num">04</div>
+          <div class="feature-icon">⊹</div>
+          <h3 class="feature-title">White Glove Service</h3>
+          <p class="feature-desc">Dedicated concierge support, bespoke packaging, and lifetime care guarantee on every purchase.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-image reveal">
+          <div class="about-img-frame">
+            <div class="about-img-inner">
+              <div class="about-img-icon">"<img src="Images/Bridal Campaign.jpg" ""></div>
+            </div>
+          </div>
+          <div class="about-tag">Est. 2015</div>
+        </div>
+        <div class="about-text reveal reveal-delay-2">
+          <span class="section-label">Our Story</span>
+          <h2 class="section-title">A Decade of <em>Refined</em> Craft</h2>
+          <p class="section-desc">
+            Aura was born from a singular obsession: to create products that feel as extraordinary as they look. Founded in 2015 by a team of former luxury goods directors, we set out to challenge what premium truly means.
+          </p>
+          <p class="section-desc" style="margin-top:1rem;">
+            Today, we serve over 80,000 clients across 42 countries — each one expecting nothing less than perfection. We haven't disappointed yet.
+          </p>
+          <div class="about-stats">
+            <div class="stat-item">
+              <div class="stat-number">80K+</div>
+              <div class="stat-label">Global Clients</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">42</div>
+              <div class="stat-label">Countries</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">99%</div>
+              <div class="stat-label">Satisfaction</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section id="products">
+    <div class="container">
+      <div class="products-header reveal">
+        <div>
+          <span class="section-label">Collection</span>
+          <h2 class="section-title">Signature <em>Pieces</em></h2>
+        </div>
+        <a href="#cta" class="btn-outline">View All</a>
+      </div>
+      <div class="products-grid">
+        <div class="product-card reveal">
+          <div class="product-visual">
+            <div class="product-bg product-bg-1"></div>
+            <div class="product-pattern"><img src="Images/download (4).jpg" alt=""></div>
+            <div class="product-overlay">
+              <span class="product-tag">Exlusive</span>
+              <h3 class="product-name">The Dresdan Series</h3>
+              <p class="product-price">From Rs. 156,500</p>
+            </div>
+            <div class="product-arrow">→</div>
+          </div>
+        </div>
+        <div class="product-card reveal reveal-delay-1">
+          <div class="product-visual">
+            <div class="product-bg product-bg-2"></div>
+            <div class="product-pattern"><img src="Images/download.jpg" alt=""></div>
+            <div class="product-overlay">
+              <span class="product-tag">Limited</span>
+              <h3 class="product-name">Azure Edition</h3>
+              <p class="product-price">From Rs. 86,500</p>
+            </div>
+            <div class="product-arrow">→</div>
+          </div>
+        </div>
+        <div class="product-card reveal reveal-delay-2">
+          <div class="product-visual">
+            <div class="product-bg product-bg-3"></div>
+            <div class="product-pattern"><img src="Images/Gem and silk.jpg" alt=""></div>
+            <div class="product-overlay">
+              <span class="product-tag">New</span>
+              <h3 class="product-name">Verdant Collection</h3>
+              <p class="product-price">From Rs. 96,500</p>
+            </div>
+            <div class="product-arrow">→</div>
+          </div>
+        </div>
+        <div class="product-card reveal reveal-delay-3">
+          <div class="product-visual">
+            <div class="product-bg product-bg-4"></div>
+            <div class="product-pattern"><img src="Images/download (1).jpg" alt=""></div>
+            <div class="product-overlay">
+              <span class="product-tag">Exclusive</span>
+              <h3 class="product-name">Rose Noir</h3>
+              <p class="product-price">From Rs. 62,500</p>
+            </div>
+            <div class="product-arrow">→</div>
+          </div>
+        </div>
+        <div class="product-card reveal">
+          <div class="product-visual">
+            <div class="product-bg product-bg-1"></div>
+            <div class="product-pattern"><img src="Images/download (2).jpg" alt=""></div>
+            <div class="product-overlay">
+              <span class="product-tag">Signature</span>
+              <h3 class="product-name">The Obsidian Series</h3>
+              <p class="product-price">From Rs. 126,500</p>
+            </div>
+            <div class="product-arrow">→</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials">
+    <div class="container">
+      <div class="testimonials-header reveal">
+        <span class="section-label">Testimonials</span>
+        <h2 class="section-title">Words from Our <em>Clients</em></h2>
+        <p class="section-desc">Over 12,000 five-star reviews and counting. Here's what our community says.</p>
+      </div>
+    </div>
+    <div style="overflow:hidden; margin-top:1rem;">
+      <div class="testimonials-track" id="testiTrack">
+        <!-- Cards duplicated for infinite scroll -->
+        <div class="testi-card">
+          <div class="testi-stars">★★★★</div>
+          <div class="testi-quote">"</div>
+          <p class="testi-text">Aura completely changed my understanding of what premium means. The craftsmanship is extraordinary — nothing I've owned compares.</p>
+          <div class="testi-author">
+            <div class="testi-avatar">S</div>
+            <div>
+              <div class="testi-name">Aditi Gaba</div>
+              <div class="testi-role">Fashion Director, Indonesia</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <div class="testi-quote">"</div>
+          <p class="testi-text">I've bought from Hermès, Louis Vuitton, and Bottega. Aura stands among them — and in some ways surpasses them in thoughtful design.</p>
+          <div class="testi-author">
+            <div class="testi-avatar">J</div>
+            <div>
+              <div class="testi-name">Millan Dutt</div>
+              <div class="testi-role">Jewellery Designer, London</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <div class="testi-quote">"</div>
+          <p class="testi-text"> Exceptional custom designs, helpful staff , and high-quality artistic pieces, often described as royal and classic.</p>
+          <div class="testi-author">
+            <div class="testi-avatar">A</div>
+            <div>
+              <div class="testi-name">Ayumi Tanaka</div>
+              <div class="testi-role">Creative Director, India</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★</div>
+          <div class="testi-quote">"</div>
+          <p class="testi-text">Gifted my partner the Obsidian Series for our anniversary. She hasn't stopped talking about it. Worth every penny and then some.</p>
+          <div class="testi-author">
+            <div class="testi-avatar">M</div>
+            <div>
+              <div class="testi-name">Rishabh Sethi</div>
+              <div class="testi-role">Architect, Paris</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <div class="testi-quote">"</div>
+          <p class="testi-text">Impeccable quality, zero compromise. I ordered on a Tuesday and it arrived in Dubai by Thursday — beautifully packaged.</p>
+          <div class="testi-author">
+            <div class="testi-avatar">L</div>
+            <div>
+              <div class="testi-name">Aashna</div>
+              <div class="testi-role">CEO, Dubai</div>
+            </div>
+          </div>
+        </div>
+        <!-- Duplicated for infinite scroll -->
+        <div class="testi-card">
+          <div class="testi-stars">★★★★</div>
+          <div class="testi-quote">"</div>
+          <p class="testi-text">Aura completely changed my understanding of what premium means. The craftsmanship is extraordinary — nothing I've owned compares.</p>
+          <div class="testi-author">
+            <div class="testi-avatar">S</div>
+            <div>
+              <div class="testi-name">Aditi Gaba</div>
+              <div class="testi-role">Fashion Director, Indonesia</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <div class="testi-quote">"</div>
+          <p class="testi-text">I've bought from Hermès, Louis Vuitton, and Bottega. Aura stands among them — and in some ways surpasses them in thoughtful design.</p>
+          <div class="testi-author">
+            <div class="testi-avatar">J</div>
+            <div>
+              <div class="testi-name">Millan Dutt</div>
+              <div class="testi-role">Jewellery Designer, London</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <div class="testi-quote">"</div>
+          <p class="testi-text">Exceptional custom designs, helpful staff , and high-quality artistic pieces, often described as royal and classic.</p>
+          <div class="testi-author">
+            <div class="testi-avatar">A</div>
+            <div>
+              <div class="testi-name">Ayumi Tanaka</div>
+              <div class="testi-role">Creative Director, Tokyo</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★</div>
+          <div class="testi-quote">"</div>
+          <p class="testi-text">Gifted my partner the Obsidian Series for our anniversary. She hasn't stopped talking about it. Worth every penny and then some.</p>
+          <div class="testi-author">
+            <div class="testi-avatar">M</div>
+            <div>
+              <div class="testi-name">Rishabh Sethi</div>
+              <div class="testi-role">Architect, Paris</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <div class="testi-quote">"</div>
+          <p class="testi-text">Impeccable quality, zero compromise. I ordered on a Tuesday and it arrived in Dubai by Thursday — beautifully packaged.</p>
+          <div class="testi-author">
+            <div class="testi-avatar">L</div>
+            <div>
+              <div class="testi-name">Aashna</div>
+              <div class="testi-role">CEO, Dubai</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="cta">
+    <div class="cta-bg"></div>
+    <div class="container">
+      <div class="cta-content reveal">
+        <span class="cta-eyebrow">✦ Begin Your Journey</span>
+        <h2 class="cta-title">Ready to Experience <em>True</em> Luxury?</h2>
+        <p class="cta-sub">Join 80,000+ discerning clients who have made Aura part of their lives. Your first order ships with our signature complimentary gift.</p>
+        <div class="cta-buttons">
+          <a href="#" class="btn-primary btn-large">Shop the Collection</a>
+          <a href="#" class="btn-outline btn-large">Book a Consultation</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="nav-logo">AU<span>R</span>A</a>
+          <p class="footer-desc">Premium experiences for those who demand nothing less than extraordinary. Curated with obsessive attention to detail since 2015.</p>
+          <div class="footer-social">
+            <a href="#" class="social-link" aria-label="Instagram">𝕀</a>
+            <a href="#" class="social-link" aria-label="Twitter">𝕏</a>
+            <a href="#" class="social-link" aria-label="Pinterest">𝕻</a>
+            <a href="#" class="social-link" aria-label="LinkedIn">𝕃</a>
+          </div>
+        </div>
+        <div>
+          <p class="footer-heading">Collection</p>
+          <ul class="footer-links">
+            <li><a href="#">Obsidian Series</a></li>
+            <li><a href="#">Azure Edition</a></li>
+            <li><a href="#">Verdant Collection</a></li>
+            <li><a href="#">Rose Noir</a></li>
+            <li><a href="#">Bespoke Orders</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="footer-heading">Company</p>
+          <ul class="footer-links">
+            <li><a href="#">Our Story</a></li>
+            <li><a href="#">Craftsmanship</a></li>
+            <li><a href="#">Sustainability</a></li>
+            <li><a href="#">Press</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="footer-heading">Contact</p>
+          <div class="footer-contact">
+            <p><a href="mailto:hello@aura.com">hello@aura.com</a></p>
+            <p><a href="tel:+18005550100">+1 800 555 0100</a></p>
+            <p style="margin-top:1rem;">Mon – Fri<br />9am – 6pm EST</p>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2026 Aura. All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Settings</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ── NAV SCROLL ──
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // ── MOBILE MENU ──
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+    });
+    document.querySelectorAll('.mob-link').forEach(link => {
+      link.addEventListener('click', () => mobileMenu.classList.remove('open'));
+    });
+
+    // ── REVEAL ON SCROLL ──
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+
+    // ── TESTIMONIALS INFINITE SCROLL WIDTH ──
+    // Already duplicated in HTML for seamless loop
+    // Adjust animation duration based on content width
+    const track = document.getElementById('testiTrack');
+    const totalWidth = track.scrollWidth / 2;
+    const speed = 60; // px per second
+    const duration = totalWidth / speed;
+    track.style.animationDuration = duration + 's';
+  </script>
+</body>
+</html>
